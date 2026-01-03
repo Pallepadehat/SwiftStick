@@ -2,7 +2,7 @@
 //  InputSimulator.swift
 //  SwiftStick
 //
-//  Created by SwiftStick AI on 03/01/2026.
+//  Created by Patrick Jakobsen on 03/01/2026.
 //
 
 import Foundation
@@ -22,8 +22,10 @@ class MacInputSimulator {
     
     func simulate(packet: GamePacket) {
         switch packet.input {
-        case .joystick(let x, let y):
-            handleJoystick(x: x, y: y)
+        case .joystickLeft(let x, let y):
+            handleLeftJoystick(x: x, y: y)
+        case .joystickRight(let x, let y):
+            handleRightJoystick(x: x, y: y)
         default:
             let keyCode = getKeyCode(for: packet.input)
             let isDown = packet.state == .down
@@ -31,24 +33,45 @@ class MacInputSimulator {
         }
     }
     
-    private func handleJoystick(x: Float, y: Float) {
+    private func handleLeftJoystick(x: Float, y: Float) {
+        // WASD Movement
         // Threshold for activation
         let threshold: Float = 0.5
         
-        // Up/Down
-        // Assuming Up is negative Y (standard screen coords), but let's check GamepadView logic
-        // In GamepadView we send normalized offset. Touch below center is +Y.
-        // So Down is +Y, Up is -Y.
+        let shouldBeUp = (y < -threshold)   // W
+        let shouldBeDown = (y > threshold)  // S
+        let shouldBeLeft = (x < -threshold) // A
+        let shouldBeRight = (x > threshold) // D
         
-        let shouldBeUp = (y < -threshold)
-        let shouldBeDown = (y > threshold)
-        let shouldBeLeft = (x < -threshold)
-        let shouldBeRight = (x > threshold)
+        // KeyCodes for WASD
+        // W=13, A=0, S=1, D=2
+        updateKey(shouldBeActive: shouldBeUp, isActive: &isUpActive, keyCode: 13)
+        updateKey(shouldBeActive: shouldBeDown, isActive: &isDownActive, keyCode: 1)
+        updateKey(shouldBeActive: shouldBeLeft, isActive: &isLeftActive, keyCode: 0)
+        updateKey(shouldBeActive: shouldBeRight, isActive: &isRightActive, keyCode: 2)
+    }
+    
+    private func handleRightJoystick(x: Float, y: Float) {
+        // Mouse Look (Delta)
+        // Only move if significantly pushed to avoid drift
+        let deadzone: Float = 0.1
+        guard abs(x) > deadzone || abs(y) > deadzone else { return }
         
-        updateKey(shouldBeActive: shouldBeUp, isActive: &isUpActive, keyCode: 126) // Up Arrow
-        updateKey(shouldBeActive: shouldBeDown, isActive: &isDownActive, keyCode: 125) // Down Arrow
-        updateKey(shouldBeActive: shouldBeLeft, isActive: &isLeftActive, keyCode: 123) // Left Arrow
-        updateKey(shouldBeActive: shouldBeRight, isActive: &isRightActive, keyCode: 124) // Right Arrow
+        // Multiplier for sensitivity
+        let sensitivity: Float = 10.0
+        
+        let dx = CGFloat(x * sensitivity)
+        let dy = CGFloat(y * sensitivity)
+        
+        // Get current mouse position
+        guard let currentEvent = CGEvent(source: nil) else { return }
+        let currentLoc = currentEvent.location
+        
+        let newLoc = CGPoint(x: currentLoc.x + dx, y: currentLoc.y + dy)
+        
+        // Post Mouse Event
+        let moveEvent = CGEvent(mouseEventSource: nil, mouseType: .mouseMoved, mouseCursorPosition: newLoc, mouseButton: .left)
+        moveEvent?.post(tap: .cghidEventTap)
     }
     
     private func updateKey(shouldBeActive: Bool, isActive: inout Bool, keyCode: CGKeyCode) {
@@ -61,16 +84,16 @@ class MacInputSimulator {
     private func getKeyCode(for input: GameInputType) -> CGKeyCode {
         switch input {
         case .buttonA: return 49 // Space
-        case .buttonB: return 3  // 'F'
-        case .buttonX: return 0  // 'A'
-        case .buttonY: return 1  // 'S'
+        case .buttonB: return 56 // Shift (Left) - Changed from 'F' to Shift for Sprint usually
+        case .buttonX: return 14 // 'E' - Interact
+        case .buttonY: return 15 // 'R' - Reload
             
-        case .dpadUp:    return 126
-        case .dpadDown:  return 125
-        case .dpadLeft:  return 123
-        case .dpadRight: return 124
+        case .dpadUp:    return 126 // Up Arrow
+        case .dpadDown:  return 125 // Down Arrow
+        case .dpadLeft:  return 123 // Left Arrow
+        case .dpadRight: return 124 // Right Arrow
             
-        case .joystick: return 0 // Handled separately
+        case .joystickLeft, .joystickRight: return 0 // Handled separately
         }
     }
     

@@ -2,7 +2,7 @@
 //  NotificationManager.swift
 //  SwiftStick
 //
-//  Created by SwiftStick AI on 03/01/2026.
+//  Created by Patrick Jakobsen on 03/01/2026.
 //
 
 import Foundation

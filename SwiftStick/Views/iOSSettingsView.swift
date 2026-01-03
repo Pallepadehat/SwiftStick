@@ -2,7 +2,7 @@
 //  SettingsView.swift
 //  SwiftStick
 //
-//  Created by SwiftStick AI on 03/01/2026.
+//  Created by Patrick Jakobsen on 03/01/2026.
 //
 
 import SwiftUI
@@ -11,14 +11,20 @@ import SwiftUI
 #if os(iOS)
 enum ControllerStyle: String, CaseIterable, Identifiable {
     case dpad = "Classic D-Pad"
-    case joystick = "Analog Joystick" // "Analog Joystick"
-    // Using string raw value for easy storage, but display needs to be handled
-    
+    case joystick = "Analog Joystick"
+    var id: String { self.rawValue }
+}
+
+enum ControllerSkin: String, CaseIterable, Identifiable {
+    case xbox = "Xbox"
+    case playstation = "PlayStation"
+    case classic = "Classic (Nintendo)"
     var id: String { self.rawValue }
 }
 
 struct iOSSettingsView: View {
     @AppStorage("controllerStyle") var controllerStyle: ControllerStyle = .dpad
+    @AppStorage("controllerSkin") var controllerSkin: ControllerSkin = .xbox
     @AppStorage("hapticEnabled") var hapticEnabled: Bool = true
     
     @Environment(\.presentationMode) var presentationMode
@@ -26,10 +32,19 @@ struct iOSSettingsView: View {
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("Controller Layout")) {
-                    Picker("Style", selection: $controllerStyle) {
+                Section(header: Text("Layout")) {
+                    Picker("Input Style", selection: $controllerStyle) {
                         ForEach(ControllerStyle.allCases) { style in
                             Text(style.rawValue).tag(style)
+                        }
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
+                }
+                
+                Section(header: Text("Theme")) {
+                    Picker("Controller Skin", selection: $controllerSkin) {
+                        ForEach(ControllerSkin.allCases) { skin in
+                            Text(skin.rawValue).tag(skin)
                         }
                     }
                     .pickerStyle(SegmentedPickerStyle())
@@ -39,7 +54,7 @@ struct iOSSettingsView: View {
                     Toggle("Haptics", isOn: $hapticEnabled)
                 }
                 
-                Section(footer: Text("SwiftStick V1.2 - Minimalist Edition")) {
+                Section(footer: Text("SwiftStick V1.0 - Made by @Pallepadehat")) {
                     // Footer
                 }
             }

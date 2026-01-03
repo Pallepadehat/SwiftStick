@@ -2,7 +2,7 @@
 //  MacLogicController.swift
 //  SwiftStick
 //
-//  Created by SwiftStick AI on 03/01/2026.
+//  Created by Patrick Jakobsen on 03/01/2026.
 //
 
 import Foundation
@@ -63,13 +63,15 @@ class MacLogicController: ObservableObject {
         case .dpadDown: return "Down"
         case .dpadLeft: return "Left"
         case .dpadRight: return "Right"
-        case .joystick(let x, let y):
-            // Simple direction check for display
+        case .joystickLeft(let x, let y):
+            // WASD
             if abs(x) > abs(y) {
-                return x > 0 ? "Stick Right" : "Stick Left"
+                return x > 0 ? "Walk Right (D)" : "Walk Left (A)"
             } else {
-                return y > 0 ? "Stick Down" : "Stick Up"
+                return y > 0 ? "Walk Back (S)" : "Walk Fwd (W)"
             }
+        case .joystickRight:
+            return "Mouse Look"
         }
     }
 }

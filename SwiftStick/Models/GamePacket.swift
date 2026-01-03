@@ -2,7 +2,7 @@
 //  GamePacket.swift
 //  SwiftStick
 //
-//  Created by SwiftStick AI on 03/01/2026.
+//  Created by Patrick Jakobsen on 03/01/2026.
 //
 
 import Foundation
@@ -16,7 +16,8 @@ enum GameInputType: Codable {
     case dpadDown
     case dpadLeft
     case dpadRight
-    case joystick(x: Float, y: Float)
+    case joystickLeft(x: Float, y: Float)
+    case joystickRight(x: Float, y: Float)
 }
 
 enum GameInputState: Codable {
