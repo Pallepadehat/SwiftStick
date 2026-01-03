@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(iOS)
 struct ContentView: View {
     @EnvironmentObject var connectionManager: ConnectionManager
     
@@ -20,3 +21,4 @@ struct ContentView: View {
         }
     }
 }
+#endif

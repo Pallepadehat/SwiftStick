@@ -9,6 +9,7 @@ import SwiftUI
 import MultipeerConnectivity
 
 
+#if os(iOS)
 struct iOSGamepadView: View {
     @EnvironmentObject var connectionManager: ConnectionManager
     @State private var showingSettings = false
@@ -180,3 +181,4 @@ struct ActionButton: View {
             )
     }
 }
+#endif

@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(iOS)
 struct iOSJoystickView: View {
     // Called with x, y values between -1.0 and 1.0
     var onDrag: (Float, Float) -> Void
@@ -52,7 +53,7 @@ struct iOSJoystickView: View {
                             // Simpler: limit distance
                             
                             var dragDistance = sqrt(pow(value.translation.width, 2) + pow(value.translation.height, 2))
-                            var dragAngle = atan2(value.translation.height, value.translation.width)
+                            let dragAngle = atan2(value.translation.height, value.translation.width)
                             
                             // Clamp distance
                             if dragDistance > maxRadius {
@@ -93,3 +94,4 @@ struct iOSJoystickView: View {
         }
     }
 }
+#endif

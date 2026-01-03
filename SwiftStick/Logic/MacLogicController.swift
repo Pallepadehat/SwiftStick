@@ -16,6 +16,7 @@ class MacLogicController: ObservableObject {
     private var subscribers = Set<AnyCancellable>()
     
     @Published var isAccessibilityTrusted: Bool = false
+    @Published var lastInput: String = "Waiting..."
     
     init() {
         setupBindings()
@@ -32,6 +33,11 @@ class MacLogicController: ObservableObject {
         // Wire Networking -> Input
         connectionManager.onInputReceived = { [weak self] packet in
             self?.inputSimulator.simulate(packet: packet)
+            
+            // Update UI with friendly input name
+            DispatchQueue.main.async {
+                self?.lastInput = self?.readableInput(packet.input) ?? ""
+            }
         }
         
         // Wire Networking -> Notification
@@ -45,6 +51,26 @@ class MacLogicController: ObservableObject {
                 }
             }
             .store(in: &subscribers)
+    }
+    
+    private func readableInput(_ input: GameInputType) -> String {
+        switch input {
+        case .buttonA: return "Button A"
+        case .buttonB: return "Button B"
+        case .buttonX: return "Button X"
+        case .buttonY: return "Button Y"
+        case .dpadUp: return "Up"
+        case .dpadDown: return "Down"
+        case .dpadLeft: return "Left"
+        case .dpadRight: return "Right"
+        case .joystick(let x, let y):
+            // Simple direction check for display
+            if abs(x) > abs(y) {
+                return x > 0 ? "Stick Right" : "Stick Left"
+            } else {
+                return y > 0 ? "Stick Down" : "Stick Up"
+            }
+        }
     }
 }
 #endif

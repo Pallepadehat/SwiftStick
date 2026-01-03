@@ -8,6 +8,7 @@
 import SwiftUI
 
 
+#if os(iOS)
 enum ControllerStyle: String, CaseIterable, Identifiable {
     case dpad = "Classic D-Pad"
     case joystick = "Analog Joystick" // "Analog Joystick"
@@ -53,5 +54,6 @@ struct iOSSettingsView: View {
         }
     }
 }
+#endif
 
 

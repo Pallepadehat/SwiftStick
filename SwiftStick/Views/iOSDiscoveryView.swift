@@ -8,6 +8,7 @@
 import SwiftUI
 import MultipeerConnectivity
 
+#if os(iOS)
 struct iOSDiscoveryView: View {
     @EnvironmentObject var connectionManager: ConnectionManager
     
@@ -56,3 +57,4 @@ struct iOSDiscoveryView: View {
         }
     }
 }
+#endif

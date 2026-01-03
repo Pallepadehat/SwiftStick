@@ -20,7 +20,7 @@ struct SwiftStickApp: App {
         MenuBarExtra("SwiftStick", systemImage: macLogic.connectionManager.isConnected ? "gamecontroller.fill" : "gamecontroller") {
             MacStatusView(controller: macLogic)
         }
-        .menuBarExtraStyle(.menu)
+        .menuBarExtraStyle(.window)
         #else
         WindowGroup {
             ContentView()
