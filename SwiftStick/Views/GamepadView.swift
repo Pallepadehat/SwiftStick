@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MultipeerConnectivity
 
 struct GamepadView: View {
     @EnvironmentObject var connectionManager: ConnectionManager
@@ -39,7 +40,6 @@ struct GamepadView: View {
         }
         .padding()
         .background(Color.black.edgesIgnoringSafeArea(.all)) // Dark theme for gamepad
-        .statusBar(hidden: true)
     }
     
     func sendInput(_ input: GameInputType, _ state: GameInputState) {

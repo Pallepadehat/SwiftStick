@@ -8,6 +8,7 @@
 import SwiftUI
 import MultipeerConnectivity
 
+#if os(macOS)
 struct MacStatusView: View {
     @ObservedObject var controller: MacLogicController
     
@@ -64,12 +65,11 @@ struct MacStatusView: View {
             Divider()
             
             Button("Quit") {
-                #if os(macOS)
                 NSApplication.shared.terminate(nil)
-                #endif
             }
             .keyboardShortcut("q")
         }
         .padding()
     }
 }
+#endif

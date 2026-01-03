@@ -48,8 +48,8 @@ struct DiscoveryView: View {
                 }
             }
             .navigationTitle("Connect Controller")
-            .onChange(of: connectionManager.isConnected) { isConnected in
-                if isConnected {
+            .onChange(of: connectionManager.isConnected) { 
+                if connectionManager.isConnected {
                     HapticManager.shared.success()
                 }
             }
