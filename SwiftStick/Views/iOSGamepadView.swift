@@ -81,21 +81,34 @@ struct iOSGamepadView: View {
 
 // MARK: - Components
 
+// MARK: - Components
+
 struct DPadView: View {
     let onInput: (GameInputType, GameInputState) -> Void
     
     var body: some View {
         GeometryReader { geo in
-             VStack(spacing: 10) {
-                 HStack { Spacer(); DPadButton(icon: "arrowtriangle.up.fill", input: .dpadUp, onInput: onInput); Spacer() }
-                 HStack(spacing: 10) {
-                     DPadButton(icon: "arrowtriangle.left.fill", input: .dpadLeft, onInput: onInput)
-                     Spacer()
-                     DPadButton(icon: "arrowtriangle.right.fill", input: .dpadRight, onInput: onInput)
-                 }
-                 HStack { Spacer(); DPadButton(icon: "arrowtriangle.down.fill", input: .dpadDown, onInput: onInput); Spacer() }
-             }
-             .padding()
+            ZStack {
+                // Cross Background (Optional: adds a "connected" feel)
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color(UIColor.systemGray5))
+                    .frame(width: 50, height: 160)
+                
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color(UIColor.systemGray5))
+                    .frame(width: 160, height: 50)
+                
+                // Buttons
+                VStack(spacing: 8) {
+                    DPadButton(icon: "arrowtriangle.up.fill", input: .dpadUp, onInput: onInput)
+                    HStack(spacing: 48) { // Wide spacing for Left/Right
+                        DPadButton(icon: "arrowtriangle.left.fill", input: .dpadLeft, onInput: onInput)
+                        DPadButton(icon: "arrowtriangle.right.fill", input: .dpadRight, onInput: onInput)
+                    }
+                    DPadButton(icon: "arrowtriangle.down.fill", input: .dpadDown, onInput: onInput)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }
@@ -104,9 +117,9 @@ struct ActionButtonsView: View {
     let onInput: (GameInputType, GameInputState) -> Void
     
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 20) { // Increased vertical spacing
             ActionButton(label: "Y", color: .yellow, input: .buttonY, onInput: onInput)
-            HStack(spacing: 30) {
+            HStack(spacing: 50) { // Increased horizontal spacing
                 ActionButton(label: "X", color: .blue, input: .buttonX, onInput: onInput)
                 ActionButton(label: "B", color: .red, input: .buttonB, onInput: onInput)
             }
@@ -125,19 +138,21 @@ struct DPadButton: View {
     
     var body: some View {
         Image(systemName: icon)
-            .resizable()
-            .scaledToFit()
-            .frame(width: 40, height: 40)
-            .padding(10)
-            .background(Color(UIColor.secondarySystemBackground))
-            .foregroundColor(.primary)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .font(.title2)
+            .foregroundColor(.primary.opacity(0.8))
+            .frame(width: 50, height: 50)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color(UIColor.secondarySystemBackground))
+                    .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 2)
+            )
             .scaleEffect(isPressed ? 0.9 : 1.0)
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { _ in
                         if !isPressed {
                             isPressed = true
+                            HapticManager.shared.light()
                             onInput(input, .down)
                         }
                     }
@@ -159,18 +174,25 @@ struct ActionButton: View {
     
     var body: some View {
         Text(label)
-            .font(.headline)
-            .frame(width: 60, height: 60)
-            .background(Color(UIColor.secondarySystemBackground))
-            .foregroundColor(color) // Use color for text/tint instead of full background
-            .clipShape(Circle())
-            .overlay(Circle().stroke(Color(UIColor.separator), lineWidth: 1))
+            .font(.system(size: 28, weight: .bold, design: .rounded))
+            .foregroundColor(.white)
+            .frame(width: 65, height: 65)
+            .background(
+                Circle()
+                    .fill(color.gradient) // Use gradient for a nice "button" feel
+                    .shadow(color: color.opacity(0.4), radius: 4, x: 0, y: 4)
+            )
+            .overlay(
+                Circle()
+                    .stroke(Color.white.opacity(0.2), lineWidth: 1)
+            )
             .scaleEffect(isPressed ? 0.92 : 1.0)
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { _ in
                         if !isPressed {
                             isPressed = true
+                            HapticManager.shared.medium()
                             onInput(input, .down)
                         }
                     }
