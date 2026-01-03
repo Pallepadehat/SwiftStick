@@ -16,7 +16,7 @@ enum GameInputType: Codable {
     case dpadDown
     case dpadLeft
     case dpadRight
-    // Future: Joysticks, Triggers
+    case joystick(x: Float, y: Float)
 }
 
 enum GameInputState: Codable {

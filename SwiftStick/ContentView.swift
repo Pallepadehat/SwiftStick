@@ -12,10 +12,10 @@ struct ContentView: View {
     
     var body: some View {
         if connectionManager.isConnected {
-            GamepadView()
+            iOSGamepadView()
                 .transition(.opacity)
         } else {
-            DiscoveryView()
+            iOSDiscoveryView()
                 .transition(.opacity)
         }
     }

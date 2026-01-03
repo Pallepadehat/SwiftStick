@@ -10,9 +10,13 @@ import MultipeerConnectivity
 import SwiftUI
 import Combine
 
+#if os(iOS)
+import UIKit
+#endif
+
 class ConnectionManager: NSObject, ObservableObject {
     private let serviceType = "rc-swiftstick"
-    private let myPeerId = MCPeerID(displayName: ProcessInfo.processInfo.hostName)
+    private let myPeerId: MCPeerID
     private var session: MCSession
     
     // Advertisers/Browsers
@@ -26,8 +30,17 @@ class ConnectionManager: NSObject, ObservableObject {
     
     // Callback for received input (Mac side mainly)
     var onInputReceived: ((GamePacket) -> Void)?
-    
+
     override init() {
+        #if os(iOS)
+        // Use the friendly device name (e.g. "Patrick's iPhone")
+        let name = UIDevice.current.name
+        #else
+        // Use the friendly Mac name (e.g. "Patrick's MacBook Pro")
+        let name = Host.current().localizedName ?? ProcessInfo.processInfo.hostName
+        #endif
+        
+        self.myPeerId = MCPeerID(displayName: name)
         self.session = MCSession(peer: myPeerId, securityIdentity: nil, encryptionPreference: .required)
         super.init()
         self.session.delegate = self

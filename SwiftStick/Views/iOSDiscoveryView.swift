@@ -8,7 +8,7 @@
 import SwiftUI
 import MultipeerConnectivity
 
-struct DiscoveryView: View {
+struct iOSDiscoveryView: View {
     @EnvironmentObject var connectionManager: ConnectionManager
     
     var body: some View {

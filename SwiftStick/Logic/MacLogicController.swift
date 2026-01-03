@@ -12,7 +12,7 @@ import MultipeerConnectivity
 #if os(macOS)
 class MacLogicController: ObservableObject {
     let connectionManager = ConnectionManager()
-    private let inputSimulator = InputSimulator()
+    private let inputSimulator = MacInputSimulator()
     private var subscribers = Set<AnyCancellable>()
     
     @Published var isAccessibilityTrusted: Bool = false
